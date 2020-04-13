@@ -1,0 +1,198 @@
+﻿<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+
+
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- 提供方应用信息，用于计算依赖关系 -->
+    <dubbo:application name="bit-api"/>
+
+    <!--关闭所有服务的启动时检查：(没有提供者时报错)-->
+    <dubbo:consumer timeout="5000" check="false" group="${dubbo.group}"/>
+
+    <!-- 这里使用的注册中心是zookeeper -->
+    <dubbo:registry address="${dubbo.registry.address}" client="zkclient"/>
+
+    <dubbo:registry protocol="zookeeper" id="commons" address="${dubbo.commons.registry.address}"/>
+
+    <!-- 从注册中心中查找用户服务 -->
+    <dubbo:reference id="userFacade" interface="cn.bit.facade.service.user.UserFacade" version="${project.version}" />
+
+    <!-- 用户房间关联表 -->
+    <dubbo:reference id="userToRoomFacade" interface="cn.bit.facade.service.user.UserToRoomFacade" timeout="5000" version="${project.version}" />
+
+    <!-- 住户档案服务 -->
+    <dubbo:reference id="householdFacade" interface="cn.bit.facade.service.user.HouseholdFacade" timeout="5000" version="${project.version}" />
+
+    <!-- 物业社区关联表 -->
+    <dubbo:reference id="userToPropertyFacade" interface="cn.bit.facade.service.user.UserToPropertyFacade" version="${project.version}" />
+
+    <!-- 用户一卡通关联表 -->
+    <dubbo:reference id="cardFacade" interface="cn.bit.facade.service.user.CardFacade" timeout="25000" version="${project.version}" />
+
+    <!-- 物业区域关联表 -->
+    <dubbo:reference id="districtFacade" interface="cn.bit.facade.service.community.DistrictFacade" version="${project.version}" />
+
+    <!-- 从注册中心中查找社区服务 -->
+    <dubbo:reference id="communityFacade" interface="cn.bit.facade.service.community.CommunityFacade" version="${project.version}" />
+
+    <!-- 从注册中心中查找楼宇服务 -->
+    <dubbo:reference id="buildingFacade" interface="cn.bit.facade.service.community.BuildingFacade" version="${project.version}" />
+
+    <!-- 从注册中心中查找房间服务 -->
+    <dubbo:reference id="roomFacade" interface="cn.bit.facade.service.community.RoomFacade" version="${project.version}" />
+
+    <!-- 从注册中心中查找反馈服务 -->
+    <dubbo:reference id="feedbackFacade" interface="cn.bit.facade.service.system.FeedbackFacade" version="${project.version}" />
+
+    <!-- 从注册中心中查找版本服务 -->
+    <dubbo:reference id="versionFacade" interface="cn.bit.facade.service.system.VersionFacade" version="${project.version}" />
+
+    <!-- 从注册中心中查找车禁服务 -->
+    <dubbo:reference id="carFacade" interface="cn.bit.facade.service.vehicle.CarFacade" version="${project.version}" />
+
+    <dubbo:reference id="inoutFacade" interface="cn.bit.facade.service.vehicle.InoutFacade" version="${project.version}" />
+
+    <!-- 应用信息 -->
+    <dubbo:reference id="appFacade" interface="cn.bit.facade.service.system.AppFacade" version="${project.version}" />
+
+    <dubbo:reference id="cameraFacade" interface="cn.bit.facade.service.communityIoT.CameraFacade" version="${project.version}" />
+
+
+    <dubbo:reference id="doorFacade" interface="cn.bit.facade.service.communityIoT.DoorFacade" timeout="10000" version="${project.version}" />
+
+    <!-- 从注册中心中查找作业服务 -->
+    <dubbo:reference id="recordFacade" interface="cn.bit.facade.service.task.RecordFacade" version="${project.version}" />
+    <dubbo:reference id="classFacade" interface="cn.bit.facade.service.task.ClassFacade" version="${project.version}" />
+    <dubbo:reference id="scheduleFacade" interface="cn.bit.facade.service.task.ScheduleFacade" timeout="5000" version="${project.version}" />
+
+    <!-- 放行条 -->
+    <dubbo:reference id="releasePassFacade" interface="cn.bit.facade.service.property.ReleasePassFacade" version="${project.version}" />
+
+    <dubbo:reference id="pushFacade" interface="cn.bit.facade.service.push.PushFacade" version="${project.version}" />
+
+    <!-- 从注册中心中查找报警服务 -->
+    <dubbo:reference id="alarmFacade" interface="cn.bit.facade.service.property.AlarmFacade" version="${project.version}" />
+
+    <!-- 从注册中心中查找物业账单服务 -->
+    <dubbo:reference id="propertyFeesFacade" interface="cn.bit.facade.service.fees.PropertyFeesFacade" timeout="5000" version="${project.version}" />
+    <dubbo:reference id="propFeeItemFacade" interface="cn.bit.facade.service.fees.PropFeeItemFacade" timeout="5000" version="${project.version}" />
+    <dubbo:reference id="feeRuleFacade" interface="cn.bit.facade.service.fees.FeeRuleFacade" timeout="5000" version="${project.version}" />
+    <dubbo:reference id="feesFacade" interface="cn.bit.facade.service.fees.FeesFacade" timeout="5000" version="${project.version}" />
+
+    <!-- 从注册中心中查找电梯服务 -->
+    <dubbo:reference id="elevatorFacade" interface="cn.bit.facade.service.communityIoT.ElevatorFacade" timeout="22000" version="${project.version}" />
+    <!-- 从注册中心中查找天气服务 -->
+    <dubbo:reference id="weatherFacade" interface="cn.bit.facade.service.communityIoT.WeatherFacade" timeout="5000" version="${project.version}" />
+
+    <dubbo:reference id="propertyFacade" interface="cn.bit.facade.service.property.PropertyFacade" version="${project.version}" />
+
+    <dubbo:reference id="noticeFacade" interface="cn.bit.facade.service.property.NoticeFacade" version="${project.version}" />
+    <dubbo:reference id="noticeTemplateFacade" interface="cn.bit.facade.service.property.NoticeTemplateFacade" version="${project.version}" />
+
+    <dubbo:reference id="clientFacade" interface="cn.bit.facade.service.system.ClientFacade" version="${project.version}" />
+
+    <dubbo:reference id="slideFacade" interface="cn.bit.facade.service.system.SlideFacade" version="${project.version}" />
+
+    <!-- 故障保修 -->
+    <dubbo:reference id="faultFacade" interface="cn.bit.facade.service.property.FaultFacade" version="${project.version}" />
+
+    <!--设备使用记录-->
+    <dubbo:reference id="doorRecordFacade" interface="cn.bit.facade.service.communityIoT.DoorRecordFacade" version="${project.version}" />
+    <dubbo:reference id="elevatorRecordFacade" interface="cn.bit.facade.service.communityIoT.ElevatorRecordFacade" version="${project.version}" />
+
+    <dubbo:reference id="resourceFacade" interface="cn.bit.facade.service.system.ResourceFacade" version="${project.version}" />
+    <!-- 投诉报事 -->
+    <dubbo:reference id="complainFacade" interface="cn.bit.facade.service.property.ComplainFacade" version="${project.version}" />
+    <!-- 配置参数 -->
+    <dubbo:reference id="parameterFacade" interface="cn.bit.facade.service.community.ParameterFacade" version="${project.version}" />
+    <!-- 大屏布局 -->
+    <dubbo:reference id="dataLayoutFacade" interface="cn.bit.facade.service.community.DataLayoutFacade" version="${project.version}" />
+    <!-- 交易服务 -->
+    <dubbo:reference id="tradeFacade" interface="cn.bit.facade.service.trade.TradeFacade" version="${project.version}" />
+    <!-- 社区交易账户 -->
+    <dubbo:reference id="communityTradeAccountFacade" interface="cn.bit.facade.service.community.CommunityTradeAccountFacade" version="${project.version}" />
+    <!-- 待办任务 -->
+    <dubbo:reference id="gtaskzsFacade" interface="cn.bit.facade.service.property.GtaskzsFacade" version="${project.version}" />
+
+    <!-- 数据统计 -->
+    <dubbo:reference id="statisticsFacade" interface="cn.bit.facade.service.statistics.StatisticsFacade" version="${project.version}" />
+
+    <!-- 商圈 -->
+    <dubbo:reference id="bizSlideFacade" interface="cn.bit.facade.service.business.BizSlideFacade" version="${project.version}" />
+
+    <dubbo:reference id="shopFacade" interface="cn.bit.facade.service.business.ShopFacade" version="${project.version}" />
+
+    <dubbo:reference id="couponFacade" interface="cn.bit.facade.service.business.CouponFacade" version="${project.version}" />
+
+    <dubbo:reference id="couponToUserFacade" interface="cn.bit.facade.service.business.CouponToUserFacade" version="${project.version}" />
+
+    <dubbo:reference id="convenienceFacade" interface="cn.bit.facade.service.business.ConvenienceFacade" version="${project.version}" />
+
+    <dubbo:reference id="goodsFacade" interface="cn.bit.facade.service.business.GoodsFacade" version="${project.version}" />
+
+    <!-- 社区动态服务接口 -->
+    <dubbo:reference id="momentFacade" interface="cn.bit.facade.service.moment.MomentFacade" version="${project.version}" />
+    <dubbo:reference id="commentFacade" interface="cn.bit.facade.service.moment.CommentFacade" version="${project.version}" />
+    <dubbo:reference id="praiseFacade" interface="cn.bit.facade.service.moment.PraiseFacade" version="${project.version}" />
+    <dubbo:reference id="reportFacade" interface="cn.bit.facade.service.moment.ReportFacade" version="${project.version}" />
+    <dubbo:reference id="messageFacade" interface="cn.bit.facade.service.moment.MessageFacade" version="${project.version}" />
+    <dubbo:reference id="shieldingFacade" interface="cn.bit.facade.service.moment.ShieldingFacade" version="${project.version}" />
+    <dubbo:reference id="silentFacade" interface="cn.bit.facade.service.moment.SilentFacade" version="${project.version}" />
+
+    <!-- 第三方访问配置信息 -->
+    <dubbo:reference id="thirdAppFacade" interface="cn.bit.facade.service.system.ThirdAppFacade" timeout="5000" version="${project.version}" />
+    <dubbo:reference id="thirdAppRecordFacade" interface="cn.bit.facade.service.system.ThirdAppRecordFacade" timeout="5000" version="${project.version}" />
+
+    <!-- 设备离线协议 -->
+    <dubbo:reference id="protocolFacade" interface="cn.bit.facade.service.communityIoT.ProtocolFacade" timeout="5000" version="${project.version}" />
+
+    <dubbo:reference id="miligcConnection" interface="cn.bit.facade.service.communityIoT.MiliConnection" version="${project.version}" timeout="20000"/>
+
+    <!-- 公共社区服务 -->
+    <dubbo:reference interface="cn.bit.common.facade.community.service.CommunityFacade" id="commonCommunityFacade"
+                     group="${dubbo.commons.group}" validation="false" registry="commons"
+                     version="${common-facade-community.version}" />
+
+    <!-- 物业人员登记 -->
+    <dubbo:reference id="registrationFacade" interface="cn.bit.facade.service.property.RegistrationFacade" version="${project.version}" />
+
+    <!-- 公共系统服务 -->
+    <dubbo:reference interface="cn.bit.common.facade.system.service.SystemFacade" id="commonSystemFacade"
+                     group="${dubbo.commons.group}" validation="false" registry="commons"
+                     version="${common-facade-system.version}" />
+    <!-- 敏感词服务 -->
+    <dubbo:reference interface="cn.bit.facade.sensitiveword.service.SensitiveFacade" id="sensitiveFacade"
+                     group="${dubbo.commons.group}" validation="false" registry="commons"
+                     version="${sensitive-word-facade.version}" />
+
+    <!-- 公共商圈服务 -->
+    <dubbo:reference interface="cn.bit.common.facade.business.service.BusinessFacade" id="businessFacade"
+                     group="${dubbo.commons.group}" validation="false" registry="commons"
+                     version="${common-facade-business.version}">
+        <dubbo:method name="receiveCoupon" loadbalance="consistenthash">
+            <dubbo:parameter key="hash.arguments" value="0,1"/>
+        </dubbo:method>
+    </dubbo:reference>
+
+    <!-- 公共用户服务 -->
+    <dubbo:reference interface="cn.bit.common.facade.user.service.UserFacade" id="commonUserFacade"
+                     group="${dubbo.commons.group}" validation="false" registry="commons"
+                     version="${common-facade-user.version}" />
+
+    <!-- 公共企业服务 -->
+    <dubbo:reference interface="cn.bit.common.facade.company.service.CompanyFacade" id="companyFacade"
+                     group="${dubbo.commons.group}" validation="false" registry="commons"
+                     version="${common-facade-company.version}" />
+
+    <!-- 公共推送服务 -->
+    <dubbo:reference interface="cn.bit.push.facade.dubbo.PushFacade" id="commonPushFacade"
+                     group="${dubbo.commons.group}" validation="false" registry="commons"
+                     version="${push-facade-dubbo.version}" />
+
+    <!-- 消息群发服务 -->
+    <dubbo:reference interface="cn.bit.massmessaging.facade.dubbo.MassMessagingFacade" id="massMessagingFacade"
+                     group="${dubbo.commons.group}" validation="false" registry="commons"
+                     version="${mass-messaging-facade-dubbo.version}" />
+</beans>

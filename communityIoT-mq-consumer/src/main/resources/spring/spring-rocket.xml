@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="doorAuthAddMessageListener" class="cn.bit.communityIoT.mq.consumer.DoorAuthAddMessageListener" />
+    <bean id="doorAuthDeleteMessageListener" class="cn.bit.communityIoT.mq.consumer.DoorAuthDeleteMessageListener" />
+    <bean id="doorAuthCoverMessageListener" class="cn.bit.communityIoT.mq.consumer.DoorAuthCoverMessageListener" />
+
+    <bean id="elevatorAuthAddMessageListener" class="cn.bit.communityIoT.mq.consumer.ElevatorAuthAddMessageListener" />
+    <bean id="elevatorAuthDeleteMessageListener" class="cn.bit.communityIoT.mq.consumer.ElevatorAuthDeleteMessageListener" />
+    <bean id="elevatorAuthCoverMessageListener" class="cn.bit.communityIoT.mq.consumer.ElevatorAuthCoverMessageListener" />
+
+    <bean id="elevatorRecordMessageListener" class="cn.bit.communityIoT.mq.consumer.ElevatorRecordConsumer"/>
+
+    <bean id="communityIoTConsumer" class="cn.bit.rocketmq.client.consumer.DefaultMultiTopicMQPushConsumer"
+          init-method="start" destroy-method="shutdown">
+        <!-- 是否顺序消费 -->
+        <!--<constructor-arg name="consumeOrderly" value="true"/>-->
+        <property name="namesrvAddr" value="${rocket.nameserver.address}" />
+        <property name="consumerGroup" value="${project.artifactId}" />
+        <property name="subscription">
+            <map>
+                <entry value-ref="elevatorRecordMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="ecc_terminal_msg_data_topic"/>
+                            <property name="expression" value="key_access"/>
+                        </bean>
+                    </key>
+                </entry>
+                <entry value-ref="doorAuthAddMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="communityIoT_door_auth"/>
+                            <property name="expression" value="add"/>
+                        </bean>
+                    </key>
+                </entry>
+                <entry value-ref="doorAuthDeleteMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="communityIoT_door_auth"/>
+                            <property name="expression" value="delete"/>
+                        </bean>
+                    </key>
+                </entry>
+                <entry value-ref="doorAuthCoverMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="communityIoT_door_auth"/>
+                            <property name="expression" value="cover"/>
+                        </bean>
+                    </key>
+                </entry>
+                <entry value-ref="elevatorAuthAddMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="communityIoT_elevator_auth"/>
+                            <property name="expression" value="add"/>
+                        </bean>
+                    </key>
+                </entry>
+                <entry value-ref="elevatorAuthDeleteMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="communityIoT_elevator_auth"/>
+                            <property name="expression" value="delete"/>
+                        </bean>
+                    </key>
+                </entry>
+                <entry value-ref="elevatorAuthCoverMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="communityIoT_elevator_auth"/>
+                            <property name="expression" value="cover"/>
+                        </bean>
+                    </key>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="authCallbackProducer" class="org.apache.rocketmq.client.producer.DefaultMQProducer" init-method="start" destroy-method="shutdown">
+        <property name="producerGroup" value="${project.artifactId}"/>
+        <property name="namesrvAddr" value="${rocket.nameserver.address}"/>
+    </bean>
+
+</beans>

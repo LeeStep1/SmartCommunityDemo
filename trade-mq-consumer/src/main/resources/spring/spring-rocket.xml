@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="paymentMessageListener" class="cn.bit.trade.mq.consumer.PaymentMessageListener" />
+    <bean id="refundMessageListener" class="cn.bit.trade.mq.consumer.RefundMessageListener" />
+
+    <bean id="paymentConsumer" class="org.apache.rocketmq.client.consumer.DefaultMQPushConsumer" init-method="start" destroy-method="shutdown">
+        <property name="namesrvAddr" value="${rocket.nameserver.address}" />
+        <property name="consumerGroup" value="${project.artifactId}" />
+        <property name="messageListener" ref="paymentMessageListener" />
+        <property name="subscription">
+            <map>
+                <entry key="trade_payment">
+                    <value>notify</value>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="refundConsumer" class="org.apache.rocketmq.client.consumer.DefaultMQPushConsumer" init-method="start" destroy-method="shutdown">
+        <property name="namesrvAddr" value="${rocket.nameserver.address}" />
+        <property name="consumerGroup" value="${project.artifactId}" />
+        <property name="messageListener" ref="refundMessageListener" />
+        <property name="subscription">
+            <map>
+                <entry key="trade_refund">
+                    <value>notify</value>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="feesPropertyBillPayment" class="org.apache.rocketmq.client.producer.DefaultMQProducer" init-method="start" destroy-method="shutdown">
+        <property name="producerGroup" value="${project.artifactId}"/>
+        <property name="namesrvAddr" value="${rocket.nameserver.address}"/>
+    </bean>
+
+</beans>

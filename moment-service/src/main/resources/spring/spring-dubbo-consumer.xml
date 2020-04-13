@@ -1,0 +1,16 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+
+
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!--关闭所有服务的启动时检查：(没有提供者时报错)-->
+    <dubbo:consumer check="false" group="${dubbo.group}"/>
+
+    <!-- 从注册中心中查找user服务 -->
+    <dubbo:reference id="userFacade" interface="cn.bit.facade.service.user.UserFacade" version="${project.version}" />
+    <!--社区参数服务-->
+    <dubbo:reference id="parameterFacade" interface="cn.bit.facade.service.community.ParameterFacade" version="${project.version}" />
+
+</beans>

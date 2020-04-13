@@ -1,0 +1,23 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!--关闭所有服务的启动时检查：(没有提供者时报错)-->
+    <dubbo:consumer check="false" group="${dubbo.group}"/>
+
+    <!-- 这里使用的注册中心是zookeeper -->
+    <dubbo:registry protocol="zookeeper" id="commons" address="${dubbo.commons.registry.address}"/>
+
+    <!-- 配置参数 -->
+    <dubbo:reference id="parameterFacade" interface="cn.bit.facade.service.community.ParameterFacade" version="${project.version}" />
+
+    <!-- 公共企业服务 -->
+    <dubbo:reference interface="cn.bit.common.facade.company.service.CompanyFacade" id="companyFacade"
+                     group="${dubbo.commons.group}" validation="false" registry="commons"
+                     version="${common-facade-company.version}" />
+</beans>

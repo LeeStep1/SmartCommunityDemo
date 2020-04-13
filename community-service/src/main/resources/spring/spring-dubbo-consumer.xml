@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+            http://www.springframework.org/schema/beans/spring-beans.xsd  
+            http://code.alibabatech.com/schema/dubbo  
+            http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<dubbo:registry protocol="zookeeper" id="commons" address="${dubbo.commons.registry.address}"/>
+
+	<dubbo:consumer check="false" group="${dubbo.group}" />
+
+	<!-- 公共社区服务 -->
+	<dubbo:reference interface="cn.bit.common.facade.community.service.CommunityFacade" id="commonCommunityFacade"
+	group="${dubbo.commons.group}" validation="false" registry="commons"
+	version="${common-facade-community.version}" />
+
+	<!-- 公共企业服务 -->
+	<dubbo:reference interface="cn.bit.common.facade.company.service.CompanyFacade" id="companyFacade"
+					 group="${dubbo.commons.group}" validation="false" registry="commons"
+					 version="${common-facade-company.version}" />
+	<!--
+	<dubbo:reference interface="wusc.edu.pay.facade.account.service.AccountManagementFacade" id="accountManagementFacade" check="false" />
+	<dubbo:reference interface="wusc.edu.pay.facade.account.service.AccountQueryFacade" id="accountQueryFacade" check="false" />
+	<dubbo:reference interface="wusc.edu.pay.facade.settlement.service.SettManagementFacade" id="settManagementFacade" check="false" />
+    -->
+	<!-- 计费
+	<dubbo:reference interface="wusc.edu.pay.facade.fee.service.FeeManagerFacade" id="feeManagerFacade" check="false" />
+	 -->
+	<!-- 开关限制包
+	<dubbo:reference interface="wusc.edu.pay.facade.limit.service.TradeLimitRouterFacade" id="tradeLimitRouterFacade" check="false" />
+	-->
+</beans>  

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/data/mongo
+        http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+
+    <!-- 默认Mongodb类型映射 -->
+    <bean id="defaultMongoTypeMapper"
+          class="org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper">
+        <constructor-arg name="typeKey">
+            <null/><!-- 这里设置为空,可以把 spring data mongodb 多余保存的_class字段去掉 -->
+        </constructor-arg>
+    </bean>
+
+    <bean id="mappingContext" class="org.springframework.data.mongodb.core.mapping.MongoMappingContext" />
+    <!-- 映射转换器，扫描back-package目录下的文件，根据注释，把它们作为mongodb的一个collection的映射 -->
+    <mongo:mapping-converter id="mappingMongoConverter" db-factory-ref="mongoDbFactory" mapping-context-ref="mappingContext"
+                             base-package="cn.bit.facade.model.system" type-mapper-ref="defaultMongoTypeMapper">
+    </mongo:mapping-converter>
+
+    <mongo:mongo-client id="mongo" replica-set="${mongo.rs}"
+                        credentials="${mongo.user}:${mongo.pwd}@${mongo.database}">
+        <mongo:client-options connections-per-host="${mongo.connectionsPerHost}"
+                              threads-allowed-to-block-for-connection-multiplier="${mongo.threadsAllowedToBlockForConnectionMultiplier}"
+                              connect-timeout="${mongo.connectTimeout}"
+                              max-wait-time="${mongo.maxWaitTime}"
+                              socket-keep-alive="${mongo.socketKeepAlive}"
+                              socket-timeout="${mongo.socketTimeout}" read-preference="SECONDARY_PREFERRED"
+                              write-concern="SAFE"/>
+    </mongo:mongo-client>
+
+    <mongo:db-factory id="mongoDbFactory" dbname="${mongo.database}" mongo-ref="mongo" />
+
+    <!-- mongodb的主要操作对象，所有对mongodb的增删改查的操作都是通过它完成 -->
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate" lazy-init="false">
+        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
+        <constructor-arg name="mongoConverter" ref="mappingMongoConverter"/>
+    </bean>
+
+    <!-- mongodb bean的仓库目录，会自动扫描扩展了MongoRepository接口的接口进行注入 -->
+    <mongo:repositories base-package="cn.bit.system.dao" repository-impl-postfix="Impl" />
+</beans>

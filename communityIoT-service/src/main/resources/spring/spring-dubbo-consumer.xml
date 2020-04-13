@@ -1,0 +1,24 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:registry protocol="zookeeper" id="commons" address="${dubbo.commons.registry.address}"/>
+
+    <!--关闭所有服务的启动时检查：(没有提供者时报错)-->
+    <dubbo:consumer check="false" group="${dubbo.group}"/>
+
+    <!-- 这里使用的注册中心是zookeeper -->
+    <dubbo:registry address="${dubbo.registry.address}" client="zkclient"/>
+
+    <!-- 公共社区服务 -->
+    <dubbo:reference interface="cn.bit.common.facade.community.service.CommunityFacade" id="commonCommunityFacade"
+                     group="${dubbo.commons.group}" validation="false" registry="commons"
+                     version="${common-facade-community.version}" />
+    <!-- 从注册中心中查找userToRoom服务 -->
+    <dubbo:reference id="userToRoomFacade" interface="cn.bit.facade.service.user.UserToRoomFacade" version="${project.version}" />
+    <!--社区服务-->
+    <dubbo:reference id="communityFacade" interface="cn.bit.facade.service.community.CommunityFacade" version="${project.version}" />
+    <dubbo:reference id="districtFacade" interface="cn.bit.facade.service.community.DistrictFacade" version="${project.version}" />
+
+</beans>

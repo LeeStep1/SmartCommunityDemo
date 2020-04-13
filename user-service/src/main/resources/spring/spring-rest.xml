@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="httpClientBuilder" class="org.apache.http.impl.client.HttpClientBuilder" factory-method="create">
+        <property name="connectionManager">
+            <bean class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager">
+                <!--整个连接池的并发-->
+                <property name="maxTotal" value="50"/>
+                <!--每个主机的并发-->
+                <property name="defaultMaxPerRoute" value="50"/>
+                <!--每个连接的存活时间，连接超过20秒不存在活动时自动关闭连接-->
+                <property name="validateAfterInactivity" value="30000"/>
+            </bean>
+        </property>
+        <!--开启重试-->
+        <property name="retryHandler">
+            <bean class="org.apache.http.impl.client.DefaultHttpRequestRetryHandler">
+                <constructor-arg value="3"/>
+                <constructor-arg value="true"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="httpClient" factory-bean="httpClientBuilder" factory-method="build"/>
+
+    <bean id="simpleClientHttpRequestFactory" class="org.springframework.http.client.SimpleClientHttpRequestFactory"/>
+    <bean id="bufferingClientHttpRequestFactory" class="org.springframework.http.client.BufferingClientHttpRequestFactory" >
+        <constructor-arg ref="simpleClientHttpRequestFactory"/>
+    </bean>
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+        <constructor-arg ref="bufferingClientHttpRequestFactory"/>
+        <property name="interceptors">
+            <list value-type="org.springframework.http.client.ClientHttpRequestInterceptor">
+                <bean class="cn.bit.user.support.rest.RestTemplateLoggingInterceptor"/>
+            </list>
+        </property>
+        <property name="messageConverters">
+            <list value-type="org.springframework.http.converter.HttpMessageConverter">
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <value>text/html;charset=UTF-8</value>
+                    </property>
+                </bean>
+                <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.ResourceHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.FormHttpMessageConverter"/>
+            </list>
+        </property>
+        <property name="requestFactory">
+            <bean class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+                <constructor-arg ref="httpClient"/>
+                <!--连接时间(毫秒)-->
+                <property name="connectTimeout" value="30000"/>
+                <!--读取时间(毫秒)-->
+                <property name="readTimeout" value="30000"/>
+            </bean>
+        </property>
+    </bean>
+</beans>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="householdAuthCallBackMessageListener" class="cn.bit.user.mq.HouseholdAuthCallBackMessageListener" />
+    <bean id="propertyAuthCallbackMessageListener" class="cn.bit.user.mq.PropertyAuthCallbackMessageListener" />
+    <bean id="companyEmployeeDeleteMessageListener" class="cn.bit.user.mq.CompanyEmployeeDeleteMessageListener" />
+    <bean id="companyEmployeeAddMessageListener" class="cn.bit.user.mq.CompanyEmployeeAddMessageListener" />
+    <bean id="companyEmployeeChangeRolesMessageListener" class="cn.bit.user.mq.CompanyEmployeeChangeRolesMessageListener" />
+    <bean id="companyCommunityBindMessageListener" class="cn.bit.user.mq.CompanyCommunityBindMessageListener" />
+    <bean id="companyCommunityUnbindMessageListener" class="cn.bit.user.mq.CompanyCommunityUnbindMessageListener" />
+    <bean id="householdImportProcessMessageListener" class="cn.bit.user.mq.HouseholdImportProcessMessageListener" />
+
+    <bean id="userConsumer" class="cn.bit.rocketmq.client.consumer.DefaultMultiTopicMQPushConsumer"
+          init-method="start" destroy-method="shutdown">
+        <!-- 是否顺序消费 -->
+        <!--<constructor-arg name="consumeOrderly" value="true"/>-->
+        <property name="namesrvAddr" value="${rocket.nameserver.address}" />
+        <property name="consumerGroup" value="${project.artifactId}" />
+        <property name="subscription">
+            <map>
+                <entry value-ref="householdAuthCallBackMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="household_new_door_auth"/>
+                            <property name="expression" value="callback"/>
+                        </bean>
+                    </key>
+                </entry>
+                <entry value-ref="propertyAuthCallbackMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="property_district_change_door_auth"/>
+                            <property name="expression" value="callback"/>
+                        </bean>
+                    </key>
+                </entry>
+
+                <entry value-ref="companyEmployeeAddMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="company_employee"/>
+                            <property name="expression" value="add"/>
+                        </bean>
+                    </key>
+                </entry>
+                <entry value-ref="companyEmployeeDeleteMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="company_employee"/>
+                            <property name="expression" value="delete"/>
+                        </bean>
+                    </key>
+                </entry>
+                <entry value-ref="companyEmployeeChangeRolesMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="company_employee"/>
+                            <property name="expression" value="change_roles"/>
+                        </bean>
+                    </key>
+                </entry>
+                <entry value-ref="companyCommunityBindMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="company_community"/>
+                            <property name="expression" value="bind"/>
+                        </bean>
+                    </key>
+                </entry>
+                <entry value-ref="companyCommunityUnbindMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="company_community"/>
+                            <property name="expression" value="unbind"/>
+                        </bean>
+                    </key>
+                </entry>
+                <entry value-ref="householdImportProcessMessageListener">
+                    <key>
+                        <bean class="cn.bit.rocketmq.client.consumer.Subscription">
+                            <property name="topic" value="household_import"/>
+                            <property name="expression" value="process"/>
+                        </bean>
+                    </key>
+                </entry>
+            </map>
+        </property>
+    </bean>
+</beans>

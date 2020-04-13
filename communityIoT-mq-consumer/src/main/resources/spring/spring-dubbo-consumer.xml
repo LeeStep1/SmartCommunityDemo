@@ -1,0 +1,26 @@
+﻿<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+
+
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- 提供方应用信息，用于计算依赖关系 -->
+    <dubbo:application name="${project.artifactId}-smart"/>
+
+    <!--关闭所有服务的启动时检查：(没有提供者时报错)-->
+    <dubbo:consumer timeout="2000" check="false" group="${dubbo.group}"/>
+
+    <!-- 这里使用的注册中心是zookeeper -->
+    <dubbo:registry address="${dubbo.registry.address}" client="zkclient"/>
+
+    <dubbo:reference id="cardFacade" interface="cn.bit.facade.service.user.CardFacade" timeout="100000" version="${project.version}" />
+    <dubbo:reference id="doorFacade" interface="cn.bit.facade.service.communityIoT.DoorFacade" timeout="100000" version="${project.version}" />
+    <dubbo:reference id="elevatorFacade" interface="cn.bit.facade.service.communityIoT.ElevatorFacade" timeout="100000" version="${project.version}" />
+    <dubbo:reference id="roomFacade" interface="cn.bit.facade.service.community.RoomFacade" version="${project.version}" />
+    <dubbo:reference id="userToRoomFacade" interface="cn.bit.facade.service.user.UserToRoomFacade" version="${project.version}" />
+    <dubbo:reference id="userToPropertyFacade" interface="cn.bit.facade.service.user.UserToPropertyFacade" version="${project.version}" />
+    <dubbo:reference id="communityFacade" interface="cn.bit.facade.service.community.CommunityFacade" version="${project.version}" />
+    <dubbo:reference id="districtFacade" interface="cn.bit.facade.service.community.DistrictFacade" version="${project.version}" />
+    <dubbo:reference id="elevatorRecordFacade" interface="cn.bit.facade.service.communityIoT.ElevatorRecordFacade" version="${project.version}"/>
+</beans>

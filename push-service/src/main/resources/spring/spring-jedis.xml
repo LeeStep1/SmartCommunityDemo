@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/cache
+           http://www.springframework.org/schema/cache/spring-cache.xsd"
+       default-autowire="byName" default-lazy-init="false">
+
+
+    <!-- 对象池配置： -->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="minIdle" value="1"/>
+        <property name="maxTotal" value="${redis.pool.maxIdle}"/>
+        <property name="maxIdle" value="${redis.pool.maxIdle}"/>
+        <property name="maxWaitMillis" value="${redis.pool.maxWait}"/>
+        <property name="testOnBorrow" value="${redis.pool.testOnBorrow}"/>
+        <property name="testOnReturn" value="false"/>
+    </bean>
+
+    <!-- 工厂实现： -->
+    <bean id="jedisConnFactory"
+          class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+          destroy-method="destroy">
+        <property name="hostName" value="${redis.host}"/>
+        <property name="port" value="${redis.port}"/>
+        <property name="password" value="${redis.pass}"/>
+        <property name="poolConfig" ref="jedisPoolConfig"/>
+        <property name="timeout" value="${redis.timeout}"/>
+        <property name="usePool" value="true"/>
+    </bean>
+    <!-- redis caceh config end -->
+
+    <!-- generic cache manager -->
+    <cache:annotation-driven/>
+    <bean id="redisTemplate" class="cn.bit.framework.redis.template.RedisTemplate">
+        <property name="connectionFactory" ref="jedisConnFactory"/>
+        <property name="enableRedisTemplateUtil" value="true"/>
+    </bean>
+
+    <bean id="cacheManager" class="org.springframework.data.redis.cache.RedisCacheManager">
+        <constructor-arg ref="redisTemplate"/>
+        <property name="usePrefix" value="true"/>
+        <property name="defaultExpiration" value="180"/>
+    </bean>
+
+
+</beans>

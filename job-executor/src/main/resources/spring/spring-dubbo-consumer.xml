@@ -1,0 +1,42 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- 提供方应用信息，用于计算依赖关系 -->
+    <dubbo:application name="${project.artifactId}-smart"/>
+
+    <!--关闭所有服务的启动时检查：(没有提供者时报错)-->
+    <dubbo:consumer check="false" timeout="5000" group="${dubbo.group}"/>
+
+    <!-- 这里使用的注册中心是zookeeper -->
+    <dubbo:registry address="${dubbo.registry.address}" client="zkclient"/>
+
+    <!-- 从注册中心中查找物业费用服务 -->
+    <dubbo:reference id="propertyFeesFacade" interface="cn.bit.facade.service.fees.PropertyFeesFacade" version="${project.version}" />
+    <dubbo:reference id="feeRuleFacade" interface="cn.bit.facade.service.fees.FeeRuleFacade" version="${project.version}" />
+    <dubbo:reference id="propFeeItemFacade" interface="cn.bit.facade.service.fees.PropFeeItemFacade" version="${project.version}" />
+
+    <!-- 从注册中心中查找物业公司服务 -->
+    <dubbo:reference id="propertyFacade" interface="cn.bit.facade.service.property.PropertyFacade" version="${project.version}" />
+
+    <!-- 从注册中心中查找用户房间关系服务 -->
+    <dubbo:reference id="userToRoomFacade" interface="cn.bit.facade.service.user.UserToRoomFacade" version="${project.version}" />
+
+    <!-- 从注册中心中查找社区服务 -->
+    <dubbo:reference id="communityFacade" interface="cn.bit.facade.service.community.CommunityFacade" version="${project.version}" />
+    <dubbo:reference id="parameterFacade" interface="cn.bit.facade.service.community.ParameterFacade" version="${project.version}" />
+
+    <!-- 商圈 -->
+    <dubbo:reference id="shopFacade" interface="cn.bit.facade.service.business.ShopFacade" version="${project.version}" />
+    <dubbo:reference id="couponFacade" interface="cn.bit.facade.service.business.CouponFacade" version="${project.version}" />
+
+    <dubbo:reference id="miliTokenFacade" interface="cn.bit.facade.service.communityIoT.MiliTokenFacade" version="${project.version}" />
+
+    <dubbo:reference id="freeViewTokenFacade" interface="cn.bit.facade.service.communityIoT.FreeViewTokenFacade" version="${project.version}" />
+
+</beans>

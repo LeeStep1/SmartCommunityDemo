@@ -1,0 +1,16 @@
+package cn.bit.framework.data.jdbc;
+
+import org.springframework.jdbc.core.RowMapper;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class DoubleMapper implements RowMapper<Double> {
+
+	
+	public Double mapRow(ResultSet rs, int rowNum) throws SQLException {
+		Double dobule = new Double(rs.getDouble(1));
+		return dobule;
+	}
+
+}
